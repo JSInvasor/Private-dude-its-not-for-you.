@@ -1,6 +1,3 @@
-# AcrylicUI
-A modern, feature-rich Roblox UI library with acrylic blur effects, smooth animations, and comprehensive functionality.
-
 ## Highlights
 -  **Modern Design** - Acrylic blur backdrop with smooth animations
 -  **Mobile Support** - Built-in draggable mobile toggle button for touch devices
@@ -16,7 +13,7 @@ A modern, feature-rich Roblox UI library with acrylic blur effects, smooth anima
 
 ### Method 1: Loadstring (Recommended)
 ```lua
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/noowtf31-ui/Arcylic/refs/heads/main/src.lua.txt"))()
+local Library = loadstring(game:HttpGet(""))()
 ```
 
 ### Method 2: Local Module
@@ -793,3 +790,4 @@ MIT License - Feel free to use and modify for your projects.
 
 ## Credits
 v0rtexd
+
