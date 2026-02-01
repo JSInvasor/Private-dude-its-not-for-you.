@@ -105,6 +105,7 @@ end
 
 local Library = {}
 Library.__index = Library
+Library.ToggleKey = Enum.KeyCode.RightControl  -- Default toggle key
 
 function Library.SettingManager()
 	local Manager = {}
