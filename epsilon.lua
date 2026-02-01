@@ -49,13 +49,12 @@ local function Create(class, props, children)
 	return obj
 end
 
--- Grid Background Function
+-- Grid Background Function (Simple Square Grid)
 local function CreateGridBackground(parent, config)
 	config = config or {}
 	local gridColor = config.GridColor or Color3.fromRGB(35, 35, 45)
 	local lineThickness = config.LineThickness or 1
-	local horizontalSpacing = config.HorizontalSpacing or 12  -- Yatay çizgi aralığı (dar = yatık efekt)
-	local verticalSpacing = config.VerticalSpacing or 40      -- Dikey çizgi aralığı (geniş = yatık efekt)
+	local spacing = config.Spacing or 18  -- Kare boyutu
 	local lineTransparency = config.LineTransparency or 0.5
 	
 	local gridContainer = Create("Frame", {
@@ -67,13 +66,13 @@ local function CreateGridBackground(parent, config)
 		Parent = parent
 	})
 	
-	-- Yatay çizgiler (horizontal lines) - dar aralıklı
-	local horizontalLines = math.ceil(400 / horizontalSpacing) + 1
+	-- Yatay çizgiler
+	local horizontalLines = math.ceil(400 / spacing) + 1
 	for i = 0, horizontalLines do
 		Create("Frame", {
 			Name = "HLine_" .. i,
 			Size = UDim2.new(1, 0, 0, lineThickness),
-			Position = UDim2.new(0, 0, 0, i * horizontalSpacing),
+			Position = UDim2.new(0, 0, 0, i * spacing),
 			BackgroundColor3 = gridColor,
 			BackgroundTransparency = lineTransparency,
 			BorderSizePixel = 0,
@@ -82,13 +81,13 @@ local function CreateGridBackground(parent, config)
 		})
 	end
 	
-	-- Dikey çizgiler (vertical lines) - geniş aralıklı
-	local verticalLines = math.ceil(600 / verticalSpacing) + 1
+	-- Dikey çizgiler (aynı spacing = kare)
+	local verticalLines = math.ceil(600 / spacing) + 1
 	for i = 0, verticalLines do
 		Create("Frame", {
 			Name = "VLine_" .. i,
 			Size = UDim2.new(0, lineThickness, 1, 0),
-			Position = UDim2.new(0, i * verticalSpacing, 0, 0),
+			Position = UDim2.new(0, i * spacing, 0, 0),
 			BackgroundColor3 = gridColor,
 			BackgroundTransparency = lineTransparency,
 			BorderSizePixel = 0,
@@ -159,8 +158,7 @@ function Library:New(config)
 	CreateGridBackground(self.Main, {
 		GridColor = gridConfig.Color or Color3.fromRGB(35, 35, 45),
 		LineThickness = gridConfig.Thickness or 1,
-		HorizontalSpacing = gridConfig.HorizontalSpacing or 12,  -- Dar = yatık efekt
-		VerticalSpacing = gridConfig.VerticalSpacing or 40,      -- Geniş = yatık efekt
+		Spacing = gridConfig.Spacing or 18,
 		LineTransparency = gridConfig.Transparency or 0.5
 	})
 
@@ -178,6 +176,89 @@ function Library:New(config)
 			BorderSizePixel = 0,
 		})
 	})
+
+	-- macOS Style Butonlar (sağ üst)
+	local buttonContainer = Create("Frame", {
+		Size = UDim2.fromOffset(70, 20),
+		Position = UDim2.new(1, -80, 0, 17),
+		BackgroundTransparency = 1,
+		ZIndex = 10,
+		Parent = self.Top
+	})
+
+	-- Kapat butonu (kırmızı)
+	local closeBtn = Create("TextButton", {
+		Size = UDim2.fromOffset(14, 14),
+		Position = UDim2.fromOffset(0, 3),
+		BackgroundColor3 = Color3.fromRGB(255, 95, 87),
+		Text = "",
+		ZIndex = 11,
+		Parent = buttonContainer
+	}, {
+		Create("UICorner", {CornerRadius = UDim.new(1, 0)}),
+		Create("UIStroke", {Color = Color3.fromRGB(200, 70, 60), Thickness = 1})
+	})
+
+	-- Minimize butonu (sarı)
+	local minimizeBtn = Create("TextButton", {
+		Size = UDim2.fromOffset(14, 14),
+		Position = UDim2.fromOffset(22, 3),
+		BackgroundColor3 = Color3.fromRGB(255, 189, 46),
+		Text = "",
+		ZIndex = 11,
+		Parent = buttonContainer
+	}, {
+		Create("UICorner", {CornerRadius = UDim.new(1, 0)}),
+		Create("UIStroke", {Color = Color3.fromRGB(200, 150, 30), Thickness = 1})
+	})
+
+	-- Maximize butonu (yeşil)
+	local maximizeBtn = Create("TextButton", {
+		Size = UDim2.fromOffset(14, 14),
+		Position = UDim2.fromOffset(44, 3),
+		BackgroundColor3 = Color3.fromRGB(40, 205, 65),
+		Text = "",
+		ZIndex = 11,
+		Parent = buttonContainer
+	}, {
+		Create("UICorner", {CornerRadius = UDim.new(1, 0)}),
+		Create("UIStroke", {Color = Color3.fromRGB(30, 160, 50), Thickness = 1})
+	})
+
+	-- Kapat butonu - UI'ı kapat
+	closeBtn.MouseButton1Click:Connect(function()
+		self.Gui:Destroy()
+	end)
+
+	-- Minimize butonu - UI'ı küçült (sadece top bar görünsün)
+	local IsMinimized = false
+	minimizeBtn.MouseButton1Click:Connect(function()
+		IsMinimized = not IsMinimized
+		local targetSize = IsMinimized and UDim2.fromOffset(550, 55) or UDim2.fromOffset(550, 380)
+		TweenService:Create(self.Main, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+			Size = targetSize
+		}):Play()
+		self.Container.Visible = not IsMinimized
+	end)
+
+	-- Maximize butonu - tam ekran toggle
+	local IsMaximized = false
+	local originalSize = UDim2.fromOffset(550, 380)
+	local originalPosition = UDim2.fromScale(0.5, 0.5)
+	maximizeBtn.MouseButton1Click:Connect(function()
+		IsMaximized = not IsMaximized
+		if IsMaximized then
+			TweenService:Create(self.Main, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+				Size = UDim2.fromScale(0.9, 0.9),
+				Position = UDim2.fromScale(0.5, 0.5)
+			}):Play()
+		else
+			TweenService:Create(self.Main, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+				Size = originalSize,
+				Position = originalPosition
+			}):Play()
+		end
+	end)
 
 	-- Logo/Image varsa ekle
 	local titleOffset = 18
@@ -224,35 +305,6 @@ function Library:New(config)
 
 	local IsOpen = true
 
-	local ToggleBtn = Create("TextButton", {
-		Name = "ToggleBtn",
-		Text = "≡",
-		Font = Enum.Font.GothamBold,
-		TextSize = 22,
-		TextColor3 = Color3.fromRGB(200, 200, 255),
-		BackgroundTransparency = 1,
-		Size = UDim2.fromOffset(35, 35),
-		AnchorPoint = Vector2.new(0, 0.5),
-		Position = UDim2.new(1, -45, 0, 27),
-		ZIndex = 50,
-		Parent = self.Main
-	})
-
-	local BtnBg = Create("Frame", {
-		Name = "BtnBg",
-		Size = UDim2.fromScale(1, 1),
-		BackgroundColor3 = Color3.fromRGB(30, 30, 45),
-		ZIndex = 49,
-		Parent = ToggleBtn
-	}, {
-		Create("UICorner", {CornerRadius = UDim.new(0, 8)}),
-		Create("UIStroke", {
-			Color = Color3.fromRGB(60, 60, 80), 
-			Thickness = 1,
-			ApplyStrokeMode = Enum.ApplyStrokeMode.Border 
-		})
-	})
-
 	self.Container = Create("Frame", {
 		Size = UDim2.new(1, 0, 1, -55),
 		Position = UDim2.fromOffset(0, 55),
@@ -262,23 +314,6 @@ function Library:New(config)
 		ZIndex = 2,  -- Grid'in üstünde
 		Parent = self.Main
 	})
-
-	ToggleBtn.MouseButton1Click:Connect(function()
-		IsOpen = not IsOpen
-
-		local targetMainSize = IsOpen and UDim2.fromOffset(550, 380) or UDim2.fromOffset(550, 55)
-		TweenService:Create(self.Main, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-			Size = targetMainSize
-		}):Play()
-		if not IsOpen then
-			self.Container.Visible = false
-		else
-			task.delay(0.1, function()
-				if IsOpen then self.Container.Visible = true end
-			end)
-		end
-	end)
-
 
 	self.Sidebar = Create("Frame", {
 		Size = UDim2.new(0, 150, 1, -16),
