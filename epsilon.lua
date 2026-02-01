@@ -15,6 +15,19 @@ local UIS = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Player = game:GetService("Players").LocalPlayer
 
+-- gethui fallback
+local function getGuiParent()
+	if gethui then
+		return gethui()
+	elseif syn and syn.protect_gui then
+		local gui = Player:WaitForChild("PlayerGui")
+		syn.protect_gui(gui)
+		return gui
+	else
+		return game:GetService("CoreGui")
+	end
+end
+
 local function Create(class, props, children)
 	local obj = Instance.new(class)
 	for k,v in pairs(props or {}) do obj[k] = v end
@@ -98,7 +111,7 @@ function Library.SettingManager()
 		tab:Button({
 			Name = "Unload UI",
 			Callback = function()
-				local core = gethui() or Player:WaitForChild("PlayerGui")
+				local core = getGuiParent()
 				local gui = core:FindFirstChild("DcusHub_v2.3 UI") or Player.PlayerGui:FindFirstChild("DcusHub_v2.3 UI")
 				if gui then gui:Destroy() end
 			end
@@ -113,7 +126,7 @@ function Library:New(config)
 	self.Gui = Create("ScreenGui", {
 		Name = "DcusHub_v2.3 UI",
 		ResetOnSpawn = false,
-		Parent = gethui()
+		Parent = getGuiParent()
 	})
 
 	self.Main = Create("Frame", {
@@ -154,6 +167,23 @@ function Library:New(config)
 		})
 	})
 
+	-- Logo/Image varsa ekle
+	local titleOffset = 18
+	if config.Image then
+		local Logo = Create("ImageLabel", {
+			Size = UDim2.fromOffset(32, 32),
+			Position = UDim2.fromOffset(12, 11),
+			BackgroundTransparency = 1,
+			Image = config.Image,
+			ScaleType = Enum.ScaleType.Fit,
+			ZIndex = 3,
+			Parent = self.Top
+		}, {
+			Create("UICorner", {CornerRadius = UDim.new(0, 6)})
+		})
+		titleOffset = 52  -- Logo varsa title'ı sağa kaydır
+	end
+
 	Create("TextLabel", {
 		Text = config.Title or "Dcus Hub",
 		Font = Enum.Font.GothamBold,
@@ -161,7 +191,7 @@ function Library:New(config)
 		TextColor3 = Color3.fromRGB(255, 255, 255),
 		TextXAlignment = "Left",
 		BackgroundTransparency = 1,
-		Position = UDim2.fromOffset(18, 8),
+		Position = UDim2.fromOffset(titleOffset, 8),
 		Size = UDim2.new(0, 200, 0, 30),
 		ZIndex = 3,
 		Parent = self.Top
@@ -175,7 +205,7 @@ function Library:New(config)
 		TextXAlignment = "Left",
 		BackgroundTransparency = 1,
 		Size = UDim2.new(0, 200, 0, 20),
-		Position = UDim2.fromOffset(18, 28),
+		Position = UDim2.fromOffset(titleOffset, 28),
 		ZIndex = 3,
 		Parent = self.Top
 	})
@@ -318,11 +348,11 @@ function Library:New(config)
 		local title = config.Title or "Notification"
 		local content = config.Content or "Notification Content"
 		local duration = config.Time or 5
-		local NotifGui = gethui():FindFirstChild("DcusNotifications")
+		local NotifGui = getGuiParent():FindFirstChild("DcusNotifications")
 		if not NotifGui then
 			NotifGui = Create("ScreenGui", {
 				Name = "DcusNotifications",
-				Parent = gethui(),
+				Parent = getGuiParent(),
 				ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 			})
 		end
