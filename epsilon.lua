@@ -54,8 +54,8 @@ local function CreateGridBackground(parent, config)
 	config = config or {}
 	local gridColor = config.GridColor or Color3.fromRGB(35, 35, 45)
 	local lineThickness = config.LineThickness or 1
-	local horizontalSpacing = config.HorizontalSpacing or 15  -- Yatay çizgiler arası (daha az = yatık görünüm)
-	local verticalSpacing = config.VerticalSpacing or 40      -- Dikey çizgiler arası (daha fazla = yatık görünüm)
+	local horizontalSpacing = config.HorizontalSpacing or 12  -- Yatay çizgi aralığı (dar = yatık efekt)
+	local verticalSpacing = config.VerticalSpacing or 40      -- Dikey çizgi aralığı (geniş = yatık efekt)
 	local lineTransparency = config.LineTransparency or 0.5
 	
 	local gridContainer = Create("Frame", {
@@ -67,7 +67,7 @@ local function CreateGridBackground(parent, config)
 		Parent = parent
 	})
 	
-	-- Yatay çizgiler (horizontal lines)
+	-- Yatay çizgiler (horizontal lines) - dar aralıklı
 	local horizontalLines = math.ceil(400 / horizontalSpacing) + 1
 	for i = 0, horizontalLines do
 		Create("Frame", {
@@ -82,7 +82,7 @@ local function CreateGridBackground(parent, config)
 		})
 	end
 	
-	-- Dikey çizgiler (vertical lines)
+	-- Dikey çizgiler (vertical lines) - geniş aralıklı
 	local verticalLines = math.ceil(600 / verticalSpacing) + 1
 	for i = 0, verticalLines do
 		Create("Frame", {
@@ -159,9 +159,9 @@ function Library:New(config)
 	CreateGridBackground(self.Main, {
 		GridColor = gridConfig.Color or Color3.fromRGB(35, 35, 45),
 		LineThickness = gridConfig.Thickness or 1,
-		HorizontalSpacing = gridConfig.HorizontalSpacing or 15,  -- Yatay çizgi aralığı
-		VerticalSpacing = gridConfig.VerticalSpacing or 40,      -- Dikey çizgi aralığı (daha geniş = yatık kareler)
-		LineTransparency = gridConfig.Transparency or 0.7
+		HorizontalSpacing = gridConfig.HorizontalSpacing or 12,  -- Dar = yatık efekt
+		VerticalSpacing = gridConfig.VerticalSpacing or 40,      -- Geniş = yatık efekt
+		LineTransparency = gridConfig.Transparency or 0.5
 	})
 
 	self.Top = Create("Frame", {
