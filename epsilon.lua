@@ -17,15 +17,29 @@ local Player = game:GetService("Players").LocalPlayer
 
 -- gethui fallback
 local function getGuiParent()
-	if gethui then
-		return gethui()
-	elseif syn and syn.protect_gui then
-		local gui = Player:WaitForChild("PlayerGui")
-		syn.protect_gui(gui)
-		return gui
-	else
+	local success, result = pcall(function()
+		if gethui then
+			return gethui()
+		end
+	end)
+	if success and result then return result end
+	
+	local success2, result2 = pcall(function()
+		if syn and syn.protect_gui then
+			local gui = Player:WaitForChild("PlayerGui")
+			syn.protect_gui(gui)
+			return gui
+		end
+	end)
+	if success2 and result2 then return result2 end
+	
+	local success3, result3 = pcall(function()
 		return game:GetService("CoreGui")
-	end
+	end)
+	if success3 and result3 then return result3 end
+	
+	-- En son fallback: PlayerGui
+	return Player:WaitForChild("PlayerGui")
 end
 
 local function Create(class, props, children)
