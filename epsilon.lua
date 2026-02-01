@@ -56,21 +56,18 @@ local function CreateGridBackground(parent, config)
 	local lineThickness = config.LineThickness or 1
 	local horizontalSpacing = config.HorizontalSpacing or 15  -- Yatay çizgiler arası (daha az = yatık görünüm)
 	local verticalSpacing = config.VerticalSpacing or 40      -- Dikey çizgiler arası (daha fazla = yatık görünüm)
-	local lineTransparency = config.LineTransparency or 0.7
+	local lineTransparency = config.LineTransparency or 0.5
 	
 	local gridContainer = Create("Frame", {
 		Name = "GridBackground",
 		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 		ClipsDescendants = true,
-		ZIndex = 0,
+		ZIndex = 1,
 		Parent = parent
 	})
 	
 	-- Yatay çizgiler (horizontal lines)
-	local parentHeight = parent.AbsoluteSize.Y
-	local parentWidth = parent.AbsoluteSize.X
-	
 	local horizontalLines = math.ceil(400 / horizontalSpacing) + 1
 	for i = 0, horizontalLines do
 		Create("Frame", {
@@ -80,7 +77,7 @@ local function CreateGridBackground(parent, config)
 			BackgroundColor3 = gridColor,
 			BackgroundTransparency = lineTransparency,
 			BorderSizePixel = 0,
-			ZIndex = 0,
+			ZIndex = 1,
 			Parent = gridContainer
 		})
 	end
@@ -95,7 +92,7 @@ local function CreateGridBackground(parent, config)
 			BackgroundColor3 = gridColor,
 			BackgroundTransparency = lineTransparency,
 			BorderSizePixel = 0,
-			ZIndex = 0,
+			ZIndex = 1,
 			Parent = gridContainer
 		})
 	end
