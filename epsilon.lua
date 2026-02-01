@@ -165,14 +165,16 @@ function Library:New(config)
 	self.Top = Create("Frame", {
 		Size = UDim2.new(1, 0, 0, 55),
 		BackgroundColor3 = Color3.fromRGB(20, 20, 28),
-		ZIndex = 2,  -- Grid'in üstünde görünsün
+		BackgroundTransparency = 0.3,  -- Cam efekti
+		ZIndex = 2,
 		Parent = self.Main
 	}, {
 		Create("UICorner", {CornerRadius = UDim.new(0, 12)}),
 		Create("Frame", {
 			Size = UDim2.new(1, 0, 0, 1),
 			Position = UDim2.new(0, 0, 1, -1),
-			BackgroundColor3 = Color3.fromRGB(45, 45, 60),
+			BackgroundColor3 = Color3.fromRGB(60, 60, 80),
+			BackgroundTransparency = 0.5,
 			BorderSizePixel = 0,
 		})
 	})
